@@ -1,4 +1,4 @@
-module cosmos-sdk-tutorial
+module github.com/bytejedi/cosmos-sdk-tutorial
 
 go 1.12
 
