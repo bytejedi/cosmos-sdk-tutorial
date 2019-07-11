@@ -36,11 +36,13 @@ func GetCmdBuyName(cdc *codec.Codec) *cobra.Command {
 		Short: "bid for existing name or claim new name",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc).WithAccountDecoder(cdc)
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			if err := cliCtx.EnsureAccountExists(); err != nil {
+			accAddress := cliCtx.GetFromAddress()
+			accGetter := auth.NewAccountRetriever(cliCtx)
+			if err := accGetter.EnsureExists(accAddress); err != nil {
 				return err
 			}
 
@@ -54,9 +56,6 @@ func GetCmdBuyName(cdc *codec.Codec) *cobra.Command {
 			if err != nil {
 				return err
 			}
-
-			cliCtx.PrintResponse = true
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -69,11 +68,13 @@ func GetCmdSetName(cdc *codec.Codec) *cobra.Command {
 		Short: "set the value associated with a name that you own",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc).WithAccountDecoder(cdc)
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			if err := cliCtx.EnsureAccountExists(); err != nil {
+			accAddress := cliCtx.GetFromAddress()
+			accGetter := auth.NewAccountRetriever(cliCtx)
+			if err := accGetter.EnsureExists(accAddress); err != nil {
 				return err
 			}
 
@@ -82,9 +83,6 @@ func GetCmdSetName(cdc *codec.Codec) *cobra.Command {
 			if err != nil {
 				return err
 			}
-
-			cliCtx.PrintResponse = true
-
 			// return utils.CompleteAndBroadcastTxCLI(txBldr, cliCtx, msgs)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
